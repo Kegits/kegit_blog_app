@@ -10,5 +10,11 @@ def create_profile(sender, instance, created, **kwargs):
 
 
 @receiver(post_save, sender=User)
-def create_profile(sender, instance, **kwargs):
-    instance.profile.save()
+def save_profile(sender, instance, **kwargs):
+    # Safely save the related profile if it exists. During user creation
+    # the profile may not yet be available in some environments, so
+    # guard against RelatedObjectDoesNotExist.
+    try:
+        instance.profile.save()
+    except Exception:
+        pass

@@ -131,6 +131,40 @@ ENV/
 env.bak/
 venv.bak/
 
+# Sensitive env and secret files
+.env.*
+.env.local
+.env.production
+.env.development
+.env.test
+.env.example
+.env.bak
+
+# Private keys and certs
+*.pem
+*.key
+*.p12
+*.jks
+*.crt
+*.cert
+*.pfx
+id_rsa
+id_rsa.pub
+
+# Cloud and credential files
+.aws/
+.aws/credentials
+.gcloud/
+.firebase/
+credentials.json
+secrets.json
+.secrets
+secret/*.json
+
+# DB backups
+db.sqlite3.bak
+
+
 # Spyder project settings
 .spyderproject
 .spyproject
