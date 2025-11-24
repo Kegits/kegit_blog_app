@@ -6,4 +6,6 @@ python-decouple==3.8
 sqlparse==0.5.3
 
 cloudinary==1.44.1
-django-cloudinary-storage==0.4.3
+# pinned to latest PyPI-compatible release available for many environments
+# available versions on PyPI include up to 0.3.0 at time of editing
+django-cloudinary-storage==0.3.0
