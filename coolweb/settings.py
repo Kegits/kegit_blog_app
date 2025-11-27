@@ -158,12 +158,18 @@ CRISPY_TEMPLATE_PACK = 'bootstrap4'
 LOGIN_REDIRECT_URL ='portfolio-home'
 LOGIN_URL = 'login'
 
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-EMAIL_HOST_USER = config('EMAIL_USER')
-EMAIL_HOST_PASSWORD = config('EMAIL_PASS')
+# Email configuration
+# Use console backend for local development to avoid requiring SMTP creds.
+if config('DEBUG', cast=bool, default=False):
+    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+else:
+    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+    EMAIL_HOST = 'smtp.gmail.com'
+    EMAIL_PORT = 587
+    EMAIL_USE_TLS = True
+    # Use safe defaults so settings import doesn't raise if vars are missing
+    EMAIL_HOST_USER = config('EMAIL_USER', default=None)
+    EMAIL_HOST_PASSWORD = config('EMAIL_PASS', default=None)
 
 # Optional AWS/S3 settings (only used when provided)
 AWS_ACCESS_KEY_ID = config('AWS_ACCESS_KEY_ID', default=None)
