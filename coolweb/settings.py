@@ -14,6 +14,10 @@ from pathlib import Path
 import os
 from decouple import config
 
+# Load environment variables from .env file
+from dotenv import load_dotenv
+load_dotenv()
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -87,7 +91,8 @@ WSGI_APPLICATION = 'coolweb.wsgi.application'
 
 # Use DATABASE_URL when provided (Postgres in production). Fall back to SQLite for local dev.
 DATABASE_URL = config('DATABASE_URL', default=None)
-if DATABASE_URL:
+# Treat empty string as None for DATABASE_URL
+if DATABASE_URL and DATABASE_URL.strip():
     import dj_database_url
     DATABASES = {
         'default': dj_database_url.parse(DATABASE_URL, conn_max_age=600),
@@ -183,9 +188,11 @@ if config('CLOUDINARY_CLOUD_NAME', default=None):
     if config('CLOUDINARY_USE_FOR_STATIC', cast=bool, default=False):
         STATICFILES_STORAGE = 'cloudinary_storage.storage.StaticCloudinaryStorage'
 
-try:
-    import django_heroku
-    django_heroku.settings(locals())
-except Exception:
-    # django-heroku not installed or not applicable in this environment
-    pass
+# Only use django_heroku in production (when DEBUG is False)
+if not DEBUG:
+    try:
+        import django_heroku
+        django_heroku.settings(locals())
+    except Exception:
+        # django-heroku not installed or not applicable in this environment
+        pass
