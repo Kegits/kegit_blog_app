@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "buildCommand": "pip install -r requirements.txt && python manage.py migrate && python manage.py collectstatic --noinput",
+  "buildCommand": "pip install -r requirements.txt && python scripts/upload_default.py && python manage.py migrate && python manage.py collectstatic --noinput",
   "builds": [
     {
       "src": "api/index.py",
