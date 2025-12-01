@@ -23,3 +23,6 @@ Pillow>=9.4.0
 
 # Serverless WSGI adapter for platforms like Vercel
 serverless-wsgi>=0.7.0
+
+# WSGI server for production
+gunicorn>=20.1.0

@@ -1,0 +1,22 @@
+# Ignore files not needed in Docker build
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.db
+*.sqlite3
+*.bak
+*.log
+*.env
+.env*
+.git
+.gitignore
+node_modules/
+staticfiles/
+media/
+venv/
+.idea/
+.vscode/
+*.swp
+*.swo
+*.egg-info/

@@ -32,7 +32,7 @@ SECRET_KEY = config('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG', cast=bool)
 
-_raw_allowed = config('ALLOWED_HOSTS', default='localhost,127.0.0.1,0.0.0.0')
+_raw_allowed = config('ALLOWED_HOSTS', default='localhost,127.0.0.1,0.0.0.0,.vercel.app')
 # Parse comma-separated ALLOWED_HOSTS env var, trim whitespace, and ignore empty entries
 ALLOWED_HOSTS = [h.strip() for h in _raw_allowed.split(',') if h.strip()]
 
