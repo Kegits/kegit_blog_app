@@ -182,8 +182,8 @@ if AWS_ACCESS_KEY_ID:
     DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 
 # Cloudinary configuration (preferred for media)
-# Note: django-cloudinary-storage 0.3.0 has a bug where it may fallback to the local
-# filesystem. To avoid this, we set MEDIA_ROOT to /tmp on serverless hosts (read-only).
+# Uses custom storage backend (CloudinaryDirectStorage) to upload directly via Cloudinary API,
+# bypassing django-cloudinary-storage which has fallback bugs on read-only filesystems.
 if config('CLOUDINARY_CLOUD_NAME', default=None):
     # Configure cloudinary library directly with credentials
     import cloudinary
@@ -192,16 +192,8 @@ if config('CLOUDINARY_CLOUD_NAME', default=None):
         api_key=config('CLOUDINARY_API_KEY'),
         api_secret=config('CLOUDINARY_API_SECRET'),
     )
-    CLOUDINARY_STORAGE = {
-        'CLOUD_NAME': config('CLOUDINARY_CLOUD_NAME'),
-        'API_KEY': config('CLOUDINARY_API_KEY'),
-        'API_SECRET': config('CLOUDINARY_API_SECRET'),
-    }
-    DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
-    # On serverless/read-only filesystems, set MEDIA_ROOT to /tmp as fallback
-    # (this is ephemeral but prevents "read-only filesystem" crashes)
-    if not DEBUG:
-        MEDIA_ROOT = '/tmp/media'
+    # Use custom storage backend for direct Cloudinary uploads
+    DEFAULT_FILE_STORAGE = 'coolweb.storage.CloudinaryDirectStorage'
     # Optionally use Cloudinary for collected static files as well
     # Enable by setting CLOUDINARY_USE_FOR_STATIC=1 in the environment
     if config('CLOUDINARY_USE_FOR_STATIC', cast=bool, default=False):
