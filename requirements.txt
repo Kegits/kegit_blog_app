@@ -20,3 +20,6 @@ django-storages>=1.13.1
  
 # Imaging library required by PIL imports
 Pillow>=9.4.0
+
+# Serverless WSGI adapter for platforms like Vercel
+serverless-wsgi>=0.7.0
