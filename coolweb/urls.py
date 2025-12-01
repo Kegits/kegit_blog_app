@@ -53,3 +53,10 @@ urlpatterns = [
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+# Temporary debug route to inspect storage config (enabled when ENABLE_DEBUG_ROUTE=1)
+import os
+if os.environ.get('ENABLE_DEBUG_ROUTE', '0') == '1' or getattr(__import__('django.conf').conf.settings, 'DEBUG', False):
+    from . import debug_views as _debug_views
+    urlpatterns += [
+        path('__debug_storage__/', _debug_views.storage_debug_view),
+    ]
