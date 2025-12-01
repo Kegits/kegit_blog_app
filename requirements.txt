@@ -17,3 +17,6 @@ crispy-bootstrap4
 
 # Storage backend helpers
 django-storages>=1.13.1
+ 
+# Imaging library required by PIL imports
+Pillow>=9.4.0
