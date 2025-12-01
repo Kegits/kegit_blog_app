@@ -7,9 +7,8 @@ python-dotenv==1.0.1
 sqlparse==0.5.3
 
 cloudinary==1.44.1
-# django-cloudinary-storage upgraded to 0.4.0 to fix fallback-to-filesystem bug in 0.3.0
-# where uploads would fail on read-only filesystems despite Cloudinary being configured
-django-cloudinary-storage==0.4.0
+# pinned to 0.3.0 (latest available on PyPI)
+django-cloudinary-storage==0.3.0
 
 # Form helpers used by templates
 django-crispy-forms
