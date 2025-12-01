@@ -35,6 +35,9 @@ DEBUG = config('DEBUG', cast=bool)
 _raw_allowed = config('ALLOWED_HOSTS', default='localhost,127.0.0.1,0.0.0.0,.vercel.app')
 # Parse comma-separated ALLOWED_HOSTS env var, trim whitespace, and ignore empty entries
 ALLOWED_HOSTS = [h.strip() for h in _raw_allowed.split(',') if h.strip()]
+# Ensure '0.0.0.0' is included for Docker development
+if '0.0.0.0' not in ALLOWED_HOSTS:
+    ALLOWED_HOSTS.append('0.0.0.0')
 
 
 # Application definition
@@ -184,19 +187,23 @@ if AWS_ACCESS_KEY_ID:
 # Cloudinary configuration (preferred for media)
 # Uses custom storage backend (CloudinaryDirectStorage) to upload directly via Cloudinary API,
 # bypassing django-cloudinary-storage which has fallback bugs on read-only filesystems.
-if config('CLOUDINARY_CLOUD_NAME', default=None):
+import os
+CLOUDINARY_CLOUD_NAME = os.environ.get('CLOUDINARY_CLOUD_NAME')
+CLOUDINARY_API_KEY = os.environ.get('CLOUDINARY_API_KEY')
+CLOUDINARY_API_SECRET = os.environ.get('CLOUDINARY_API_SECRET')
+if CLOUDINARY_CLOUD_NAME:
     # Configure cloudinary library directly with credentials
     import cloudinary
     cloudinary.config(
-        cloud_name=config('CLOUDINARY_CLOUD_NAME'),
-        api_key=config('CLOUDINARY_API_KEY'),
-        api_secret=config('CLOUDINARY_API_SECRET'),
+        cloud_name=CLOUDINARY_CLOUD_NAME,
+        api_key=CLOUDINARY_API_KEY,
+        api_secret=CLOUDINARY_API_SECRET,
     )
     # Use custom storage backend for direct Cloudinary uploads
     DEFAULT_FILE_STORAGE = 'coolweb.storage.CloudinaryDirectStorage'
     # Optionally use Cloudinary for collected static files as well
     # Enable by setting CLOUDINARY_USE_FOR_STATIC=1 in the environment
-    if config('CLOUDINARY_USE_FOR_STATIC', cast=bool, default=False):
+    if os.environ.get('CLOUDINARY_USE_FOR_STATIC'):
         STATICFILES_STORAGE = 'cloudinary_storage.storage.StaticCloudinaryStorage'
 
 # Only use django_heroku in production (when DEBUG is False)

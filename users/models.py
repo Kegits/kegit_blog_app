@@ -1,15 +1,16 @@
 from django.db import models
 from django.contrib.auth.models import User
 from PIL import Image
-from coolweb.storage import CloudinaryDirectStorage
 
 # Create your models here.
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
+    # Use a Cloudinary-hosted default image URL or a local filename if uploaded to Cloudinary
+    # If using a filename, ensure 'default.jpg' exists in your Cloudinary account.
+    # For now, using a simple placeholder—upload default.jpg to Cloudinary and use that filename.
     image = models.ImageField(
-        default='default.jpg', 
-        upload_to='profile_pics',
-        storage=CloudinaryDirectStorage()
+        default='profile_pics/default',  # Cloudinary public_id for default image
+        upload_to='profile_pics'
     )
 
     def __str__(self):

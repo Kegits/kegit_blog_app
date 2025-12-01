@@ -1,0 +1,6 @@
+- [x] Update vercel.json buildCommand to include collectstatic
+- [x] Update users/models.py default image path
+- [x] Run migration script to upload existing images to Cloudinary
+- [ ] Ensure Cloudinary credentials are set in Vercel environment variables (user needs to set in dashboard or provide values)
+- [x] Upload default.jpg to Cloudinary
+- [x] Deploy to Vercel
