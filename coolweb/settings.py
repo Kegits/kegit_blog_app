@@ -174,23 +174,16 @@ else:
     EMAIL_HOST_USER = config('EMAIL_USER', default=None)
     EMAIL_HOST_PASSWORD = config('EMAIL_PASS', default=None)
 
-# Optional AWS/S3 settings (only used when provided)
-AWS_ACCESS_KEY_ID = config('AWS_ACCESS_KEY_ID', default=None)
-AWS_SECRET_ACCESS_KEY = config('AWS_SECRET_ACCESS_KEY', default=None)
-AWS_STORAGE_BUCKET_NAME = config('AWS_STORAGE_BUCKET_NAME', default=None)
-
-if AWS_ACCESS_KEY_ID:
-    AWS_S3_FILE_OVERWRITE = False
-    AWS_DEFAULT_ACL = None
-    DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
-
-# Cloudinary configuration (preferred for media)
+# Cloudinary configuration (required for media in production)
 # Uses custom storage backend (CloudinaryDirectStorage) to upload directly via Cloudinary API,
 # bypassing django-cloudinary-storage which has fallback bugs on read-only filesystems.
 import os
+from django.core.exceptions import ImproperlyConfigured
+
 CLOUDINARY_CLOUD_NAME = os.environ.get('CLOUDINARY_CLOUD_NAME')
 CLOUDINARY_API_KEY = os.environ.get('CLOUDINARY_API_KEY')
 CLOUDINARY_API_SECRET = os.environ.get('CLOUDINARY_API_SECRET')
+
 if CLOUDINARY_CLOUD_NAME:
     # Configure cloudinary library directly with credentials
     import cloudinary
@@ -205,6 +198,12 @@ if CLOUDINARY_CLOUD_NAME:
     # Enable by setting CLOUDINARY_USE_FOR_STATIC=1 in the environment
     if os.environ.get('CLOUDINARY_USE_FOR_STATIC'):
         STATICFILES_STORAGE = 'cloudinary_storage.storage.StaticCloudinaryStorage'
+elif not DEBUG:
+    # In production (e.g., Vercel), Cloudinary must be configured to avoid read-only filesystem issues
+    raise ImproperlyConfigured(
+        "Cloudinary must be configured in production. Set CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, and CLOUDINARY_API_SECRET environment variables."
+    )
+# If DEBUG=True and Cloudinary not configured, use default local storage for development
 
 # Only use django_heroku in production (when DEBUG is False)
 if not DEBUG:
