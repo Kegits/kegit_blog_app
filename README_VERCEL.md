@@ -34,7 +34,7 @@ Recommended workflow
 Notes about migrations & collectstatic
 - Because Vercel serverless functions are not persistent and deployments are ephemeral, running migrations automatically on every deploy is brittle.
 - Migrations run in the GitHub Actions workflow before deployment. Avoid running them during Vercel's build because build attempts can be retried.
-- Static files are collected during the Vercel build and served from `staticfiles/`. To store them in Cloudinary instead, set `CLOUDINARY_USE_FOR_STATIC=1`; Django 5.2 selects that backend through `STORAGES`.
+- Vercel serves `/static/*` from the tracked `staticfiles/` directory. After changing files under `portfolio/static/`, run `python manage.py collectstatic --noinput` and include the updated files in `staticfiles/` in the deployment commit. To store static files in Cloudinary instead, set `CLOUDINARY_USE_FOR_STATIC=1`; Django 5.2 selects that backend through `STORAGES`.
 
 Troubleshooting
 - If the function fails with import errors, ensure `requirements.txt` lists all runtime packages and that Vercel installed them (check deployment logs).

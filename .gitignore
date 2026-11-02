@@ -63,6 +63,14 @@ cover/
 local_settings.py
 db.sqlite3
 db.sqlite3-journal
+*.sqlite3
+*.sqlite3-*
+*.db
+*.db-*
+
+# Local uploads and environment overrides
+/media/
+.envrc
 
 # Flask stuff:
 instance/
@@ -139,15 +147,19 @@ venv.bak/
 .env.test
 .env.example
 .env.bak
+!.env.example
 
 # Private keys and certs
 *.pem
 *.key
 *.p12
+*.p8
 *.jks
 *.crt
 *.cert
 *.pfx
+*.asc
+*.gpg
 id_rsa
 id_rsa.pub
 
@@ -159,6 +171,7 @@ id_rsa.pub
 credentials.json
 secrets.json
 .secrets
+secrets/
 secret/*.json
 
 # DB backups

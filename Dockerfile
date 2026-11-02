@@ -10,14 +10,11 @@ ENV PYTHONUNBUFFERED=1
 # Set work directory
 WORKDIR /app
 
-# Allow passing a SECRET_KEY at build time (useful for CI/production builds).
-# Default is a simple dev key used only during image build; override with
-# `--build-arg SECRET_KEY=your_secret` when building for production.
-ARG SECRET_KEY=unsafe_dev_secret_for_build
-ENV SECRET_KEY=${SECRET_KEY}
+# Provide SECRET_KEY as a runtime environment variable; do not bake it into the image.
+
 
 # Allow passing DEBUG at build time (defaults to True for build/runtime convenience)
-ARG DEBUG=1
+ARG DEBUG=0
 ENV DEBUG=${DEBUG}
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
