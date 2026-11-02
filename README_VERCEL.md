@@ -43,4 +43,5 @@ Troubleshooting
 Community features
 - Signed-in users can comment on public posts. `@username` mentions link to that user's public stories and create an in-app notification.
 - Private one-to-one conversations are visible only to their two participants in the app. Messages are stored as regular database text and are not end-to-end encrypted.
-- Apply the new `portfolio` and `messaging` migrations to the configured Postgres database before using these features. The GitHub Actions workflow runs migrations before deployment when its database secret is configured.
+- Apply the new `users`, `portfolio`, and `messaging` migrations to the configured Postgres database before using these features. The GitHub Actions workflow runs migrations before deployment when its database secret is configured.
+- Signed-in users can choose system/light/dark appearance and separate profile-header and chat-background palettes in Profile settings. System appearance follows the device color preference.

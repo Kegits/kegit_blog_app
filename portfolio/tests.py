@@ -54,6 +54,13 @@ class PostCommentTests(TestCase):
         self.assertContains(response, '1')
         self.assertContains(response, 'comment')
         self.assertContains(response, 'Active ')
+        self.assertContains(response, 'class="story-grid"')
+        self.assertContains(response, 'Read story')
+        self.assertContains(response, 'Join conversation')
+        self.assertContains(
+            response,
+            f'href="{self.post.get_absolute_url()}#comments-heading"',
+        )
         self.assertNotContains(
             response,
             'This reply should only appear after opening the conversation.',

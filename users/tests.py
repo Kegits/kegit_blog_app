@@ -138,6 +138,9 @@ class ProfileUploadFlowTests(TestCase):
             {
                 'username': self.user.username,
                 'email': self.user.email,
+                'theme_mode': Profile.ThemeMode.SYSTEM,
+                'profile_background': Profile.BackgroundStyle.FOREST,
+                'chat_background': Profile.BackgroundStyle.FOREST,
                 'image': SimpleUploadedFile(
                     'smoke.jpg',
                     image_buffer.getvalue(),
@@ -151,6 +154,46 @@ class ProfileUploadFlowTests(TestCase):
         image_name = self.user.profile.image.name
         self.assertTrue(image_name.startswith('profile_pics/'))
         self.assertTrue((Path(self.media_dir.name) / image_name).is_file())
+
+    def test_profile_appearance_preferences_are_saved_and_applied(self):
+        response = self.client.post(
+            reverse('profile'),
+            {
+                'username': self.user.username,
+                'email': self.user.email,
+                'theme_mode': Profile.ThemeMode.DARK,
+                'profile_background': Profile.BackgroundStyle.OCEAN,
+                'chat_background': Profile.BackgroundStyle.MIDNIGHT,
+            },
+        )
+
+        self.assertRedirects(response, reverse('profile'))
+        self.user.profile.refresh_from_db()
+        self.assertEqual(self.user.profile.theme_mode, Profile.ThemeMode.DARK)
+        self.assertEqual(
+            self.user.profile.profile_background,
+            Profile.BackgroundStyle.OCEAN,
+        )
+        self.assertEqual(
+            self.user.profile.chat_background,
+            Profile.BackgroundStyle.MIDNIGHT,
+        )
+
+        home_response = self.client.get(reverse('portfolio-home'))
+        self.assertContains(home_response, '<html lang="en" data-theme="dark">')
+
+        Post.objects.create(
+            title='A themed story',
+            content='Its author chose an ocean profile background.',
+            author=self.user,
+        )
+        stories_response = self.client.get(
+            reverse('user-posts', kwargs={'username': self.user.username})
+        )
+        self.assertContains(
+            stories_response,
+            'class="hero-panel profile-hero profile-theme-ocean"',
+        )
 
 
 class LogoutFlowTests(TestCase):

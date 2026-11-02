@@ -47,6 +47,8 @@ class PrivateConversationTests(TestCase):
         self.assertEqual(message.body, 'A private hello')
 
         self.client.force_login(self.bob)
+        self.bob.profile.chat_background = 'ocean'
+        self.bob.profile.save(update_fields=['chat_background'])
         inbox_response = self.client.get(reverse('messaging:inbox'))
         self.assertContains(inbox_response, 'A private hello')
         self.assertContains(inbox_response, 'nav-count">1')
@@ -57,6 +59,7 @@ class PrivateConversationTests(TestCase):
             reverse('messaging:conversation', kwargs={'pk': conversation.pk})
         )
         self.assertContains(response, 'A private hello')
+        self.assertContains(response, 'direct-message-list chat-theme-ocean')
         message.refresh_from_db()
         self.assertIsNotNone(message.read_at)
 

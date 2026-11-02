@@ -23,32 +23,39 @@
     </div>
   </div>
 
-  {% for post in posts %}
-    <article class="post-card">
-      <img class="article-img" src="{{ post.author.profile.image.url }}" data-fallback-url="{{ profile_image_fallback_url }}" alt="{{ post.author.username }}'s profile picture">
-      <div class="post-card-body">
-        <div class="article-metadata">
-          <a href="{% url 'user-posts' post.author.username %}">{{ post.author }}</a>
-          <span aria-hidden="true">·</span>
-          <time datetime="{{ post.date_posted|date:'c' }}">{{ post.date_posted|date:"M d, Y" }}</time>
+  <div class="story-grid">
+    {% for post in posts %}
+      <article class="post-card">
+        <div class="post-card-author">
+          <img class="article-img" src="{{ post.author.profile.image.url }}" data-fallback-url="{{ profile_image_fallback_url }}" alt="{{ post.author.username }}'s profile picture">
+          <div class="article-metadata">
+            <a href="{% url 'user-posts' post.author.username %}">{{ post.author }}</a>
+            <time datetime="{{ post.date_posted|date:'c' }}">{{ post.date_posted|date:"M d, Y" }}</time>
+          </div>
         </div>
-        <h3><a class="article-title" href="{% url 'post-detail' post.id %}">{{ post.title }}</a></h3>
-        <p class="article-content">{{ post.content|truncatewords:45 }}</p>
-        {% include "portfolio/_post_conversation.html" %}
+        <div class="post-card-body">
+          <h3><a class="article-title" href="{% url 'post-detail' post.id %}">{{ post.title }}</a></h3>
+          <p class="article-content">{{ post.content|truncatewords:45 }}</p>
+          {% include "portfolio/_post_conversation.html" %}
+          <div class="story-card-actions">
+            <a class="story-read-link" href="{% url 'post-detail' post.id %}">Read story <span aria-hidden="true">↗</span></a>
+            <a class="story-join-link" href="{% url 'post-detail' post.id %}#comments-heading">Join conversation</a>
+          </div>
+        </div>
+      </article>
+    {% empty %}
+      <div class="empty-state story-grid-empty">
+        <span class="eyebrow">A fresh start</span>
+        <h2>It’s quiet in here. For now.</h2>
+        <p>Be the first to share a story with the community.</p>
+        {% if user.is_authenticated %}
+          <a class="btn btn-primary" href="{% url 'post-create' %}">Write the first post</a>
+        {% else %}
+          <a class="btn btn-primary" href="{% url 'register' %}">Join and post first</a>
+        {% endif %}
       </div>
-    </article>
-  {% empty %}
-    <div class="empty-state">
-      <span class="eyebrow">A fresh start</span>
-      <h2>It’s quiet in here. For now.</h2>
-      <p>Be the first to share a story with the community.</p>
-      {% if user.is_authenticated %}
-        <a class="btn btn-primary" href="{% url 'post-create' %}">Write the first post</a>
-      {% else %}
-        <a class="btn btn-primary" href="{% url 'register' %}">Join and post first</a>
-      {% endif %}
-    </div>
-  {% endfor %}
+    {% endfor %}
+  </div>
 
   {% if is_paginated %}
     <nav class="pagination" aria-label="Post pages">

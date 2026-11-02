@@ -17,7 +17,14 @@
         <p>Update your details or choose a new profile picture. Your current picture appears across your stories.</p>
       </div>
       {{ u_form|crispy }}
-      {{ p_form|crispy }}
+      {{ p_form.image|as_crispy_field }}
+      <div class="form-heading appearance-heading">
+        <h2>Appearance</h2>
+        <p>Choose your theme and personalize your public profile and private chat backgrounds.</p>
+      </div>
+      {{ p_form.theme_mode|as_crispy_field }}
+      {{ p_form.profile_background|as_crispy_field }}
+      {{ p_form.chat_background|as_crispy_field }}
       <button class="btn btn-primary" type="submit">Save profile</button>
     </form>
 </section>

@@ -13,7 +13,7 @@
       <a class="small-link" href="{% url 'user-posts' other_user.username %}">View public stories</a>
     </header>
 
-    <div class="direct-message-list" aria-live="polite">
+    <div class="direct-message-list chat-theme-{{ user.profile.chat_background }}" aria-live="polite">
       {% for message in direct_messages %}
         <article class="direct-message{% if message.sender_id == user.pk %} direct-message-mine{% endif %}">
           <div class="direct-message-meta">

@@ -45,9 +45,12 @@ class UserPostListView(ListView):
     paginate_by = 5
 
     def get_queryset(self):
-        user = get_object_or_404(User, username=self.kwargs.get('username'))
+        self.profile_user = get_object_or_404(
+            User.objects.select_related('profile'),
+            username=self.kwargs.get('username'),
+        )
         return (
-            Post.objects.filter(author=user)
+            Post.objects.filter(author=self.profile_user)
             .select_related('author', 'author__profile')
             .annotate(
                 comment_count=Count('comments'),
@@ -55,6 +58,11 @@ class UserPostListView(ListView):
             )
             .order_by('-date_posted')
         )
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['profile'] = self.profile_user.profile
+        return context
 
 
 class PostDetailView(DetailView):
