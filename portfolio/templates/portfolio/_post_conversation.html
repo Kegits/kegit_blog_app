@@ -1,0 +1,25 @@
+<details
+  class="post-conversation"
+  data-comments-url="{% url 'post-comments-preview' post.pk %}"
+>
+  <summary class="conversation-toggle">
+    <span class="conversation-icon" aria-hidden="true">◌</span>
+    {% if post.comment_count %}
+      <span>
+        Conversation · {{ post.comment_count }}
+        {% if post.comment_count == 1 %}comment{% else %}comments{% endif %}
+      </span>
+      <time class="conversation-activity" datetime="{{ post.latest_comment_at|date:'c' }}">
+        Active {{ post.latest_comment_at|date:"M j, g:i a" }}
+      </time>
+    {% else %}
+      <span>Start the conversation</span>
+    {% endif %}
+    <span class="conversation-chevron" aria-hidden="true">⌄</span>
+  </summary>
+  <div class="conversation-preview" data-comments-content aria-live="polite">
+    <a class="conversation-fallback" href="{{ post.get_absolute_url }}#comments-heading">
+      Open the story to join the conversation
+    </a>
+  </div>
+</details>

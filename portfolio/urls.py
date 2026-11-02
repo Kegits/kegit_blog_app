@@ -13,6 +13,16 @@ urlpatterns = [
     path('', PostListView.as_view(), name='portfolio-home'),
     path('user/<str:username>', UserPostListView.as_view(), name='user-posts'),
     path('post/<int:pk>/', PostDetailView.as_view(), name='post-detail'),
+    path(
+        'post/<int:pk>/comments/',
+        views.create_comment,
+        name='post-comment-create',
+    ),
+    path(
+        'post/<int:pk>/comments/preview/',
+        views.comment_preview,
+        name='post-comments-preview',
+    ),
     path('post/new/', PostCreateView.as_view(), name='post-create'),
     path('post/<int:pk>/update/', PostUpdateView.as_view(), name='post-update'),
     path('post/<int:pk>/delete/', PostDeleteView.as_view(), name='post-delete'),

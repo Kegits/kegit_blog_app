@@ -18,6 +18,7 @@ from django.contrib.auth import views as auth_views
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
+from portfolio import views as portfolio_views
 from users import views as user_views
 
 urlpatterns = [
@@ -48,6 +49,13 @@ urlpatterns = [
          auth_views.PasswordResetCompleteView.as_view(
              template_name='users/password_reset_complete.html'), 
          name='password_reset_complete'),
+    path('messages/', include('messaging.urls')),
+    path('notifications/', portfolio_views.notifications, name='notifications'),
+    path(
+        'notifications/<int:pk>/open/',
+        portfolio_views.open_notification,
+        name='notification-open',
+    ),
     path('', include('portfolio.urls')),
 ]
 

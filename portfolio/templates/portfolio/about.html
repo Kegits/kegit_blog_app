@@ -1,4 +1,14 @@
 {% extends "portfolio/base.html" %}
 {% block content %}
-    <h1>about us</h1>
+  <section class="about-panel">
+    <span class="eyebrow">A little about us</span>
+    <h1>Every voice has a story.</h1>
+    <p>254 Gossip is a community for the stories, ideas, and everyday moments worth talking about. Come to read, stay to share your perspective.</p>
+    <p>Whether it’s a big idea or a small moment, there’s room for your voice here.</p>
+    {% if user.is_authenticated %}
+      <a class="btn btn-primary" href="{% url 'post-create' %}">Share your story <span aria-hidden="true">↗</span></a>
+    {% else %}
+      <a class="btn btn-primary" href="{% url 'register' %}">Join the conversation <span aria-hidden="true">↗</span></a>
+    {% endif %}
+  </section>
 {% endblock content %}

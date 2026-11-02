@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 from pathlib import Path
 import os
 from decouple import config
+from django.core.exceptions import ImproperlyConfigured
 
 # Load environment variables from .env file
 from dotenv import load_dotenv
@@ -30,7 +31,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = config('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = config('DEBUG', cast=bool)
+DEBUG = config('DEBUG', cast=bool, default=False)
 
 _raw_allowed = config('ALLOWED_HOSTS', default='localhost,127.0.0.1,0.0.0.0,.vercel.app')
 # Parse comma-separated ALLOWED_HOSTS env var, trim whitespace, and ignore empty entries
@@ -45,6 +46,7 @@ if '0.0.0.0' not in ALLOWED_HOSTS:
 INSTALLED_APPS = [
     'portfolio.apps.PortfolioConfig',
     'users.apps.UsersConfig',
+    'messaging.apps.MessagingConfig',
     'crispy_forms',
     'crispy_bootstrap4',
     'django.contrib.admin',
@@ -81,6 +83,8 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'users.context_processors.profile_image_fallback',
+                'messaging.context_processors.social_unread_counts',
             ],
         },
     },
@@ -177,12 +181,28 @@ else:
 # Cloudinary configuration (required for media in production)
 # Uses custom storage backend (CloudinaryDirectStorage) to upload directly via Cloudinary API,
 # bypassing django-cloudinary-storage which has fallback bugs on read-only filesystems.
-import os
-from django.core.exceptions import ImproperlyConfigured
-
 CLOUDINARY_CLOUD_NAME = os.environ.get('CLOUDINARY_CLOUD_NAME')
 CLOUDINARY_API_KEY = os.environ.get('CLOUDINARY_API_KEY')
 CLOUDINARY_API_SECRET = os.environ.get('CLOUDINARY_API_SECRET')
+cloudinary_credentials = (
+    CLOUDINARY_CLOUD_NAME,
+    CLOUDINARY_API_KEY,
+    CLOUDINARY_API_SECRET,
+)
+
+if any(cloudinary_credentials) and not all(cloudinary_credentials):
+    raise ImproperlyConfigured(
+        "Set CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, and CLOUDINARY_API_SECRET together."
+    )
+
+STORAGES = {
+    'default': {
+        'BACKEND': 'django.core.files.storage.FileSystemStorage',
+    },
+    'staticfiles': {
+        'BACKEND': 'django.contrib.staticfiles.storage.StaticFilesStorage',
+    },
+}
 
 if CLOUDINARY_CLOUD_NAME:
     # Configure cloudinary library directly with credentials
@@ -193,11 +213,15 @@ if CLOUDINARY_CLOUD_NAME:
         api_secret=CLOUDINARY_API_SECRET,
     )
     # Use custom storage backend for direct Cloudinary uploads
-    DEFAULT_FILE_STORAGE = 'coolweb.storage.CloudinaryDirectStorage'
+    STORAGES['default'] = {
+        'BACKEND': 'coolweb.storage.CloudinaryDirectStorage',
+    }
     # Optionally use Cloudinary for collected static files as well
     # Enable by setting CLOUDINARY_USE_FOR_STATIC=1 in the environment
     if os.environ.get('CLOUDINARY_USE_FOR_STATIC'):
-        STATICFILES_STORAGE = 'cloudinary_storage.storage.StaticCloudinaryStorage'
+        STORAGES['staticfiles'] = {
+            'BACKEND': 'cloudinary_storage.storage.StaticCloudinaryStorage',
+        }
 elif not DEBUG:
     # In production (e.g., Vercel), Cloudinary must be configured to avoid read-only filesystem issues
     raise ImproperlyConfigured(

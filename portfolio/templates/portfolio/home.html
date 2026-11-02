@@ -1,37 +1,64 @@
 {% extends "portfolio/base.html" %}
 {% block content %}
-    {% for post in posts %}
-    <article class="media content-section">
-      <img class="rounded-circle article-img" src="{{ post.author.profile.image.url }}">
-        <div class="media-body">
-          <div class="article-metadata">
-            <a class="mr-2" href="{% url 'user-posts' post.author.username %}">{{ post.author }}</a>
-            <small class="text-muted">{{ post.date_posted|date:"F d, Y" }}</small>
-          </div>
-          <h2><a class="article-title" href="{% url 'post-detail' post.id %}">{{ post.title }}</a></h2>
-          <p class="article-content">{{ post.content }}</p>
-        </div>
-      </article>
-    {% endfor %}
-    {% if is_paginated %}
-
-      {% if page_obj.has_previous %}
-        <a class="btn btn-outline-info mb-4" href="?page=1">First</a>
-        <a class="btn btn-outline-info mb-4" href="?page={{ page_obj.previous_page_number }}">Previous</a>
+  <section class="hero-panel">
+    <span class="eyebrow">Your community, your stories</span>
+    <h1>Stories worth talking about.</h1>
+    <p>Fresh perspectives, bold conversations, and the moments that bring us together. Pull up a seat.</p>
+    <div class="hero-actions">
+      {% if user.is_authenticated %}
+        <a class="btn btn-hero" href="{% url 'post-create' %}">Share your story <span aria-hidden="true">↗</span></a>
+        <span class="hero-note">Your voice belongs here.</span>
+      {% else %}
+        <a class="btn btn-hero" href="{% url 'register' %}">Join the conversation <span aria-hidden="true">↗</span></a>
+        <a class="hero-note" href="{% url 'login' %}">Already a member? Sign in</a>
       {% endif %}
+    </div>
+  </section>
 
-        {% for num in page_obj.paginator.page_range %}
-          {% if page_obj.number == num %}
-            <a class="btn btn-info mb-4" href="?page={{ num }}">{{ num }}</a>
-          {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
-            <a class="btn btn-outline-info mb-4" href="?page={{ num }}">{{ num }}</a>
-          {% endif %}
-        {% endfor %}
+  <div class="section-heading">
+    <div>
+      <span class="eyebrow">The latest</span>
+      <h2>From the community</h2>
+      <p>Real people. Fresh takes. Your next favorite read.</p>
+    </div>
+  </div>
 
-        {% if page_obj.has_next %}
-          <a class="btn btn-outline-info mb-4" href="?page={{ page_obj.next_page_number }}">Next</a>
-          <a class="btn btn-outline-info mb-4" href="?page={{ page_obj.paginator.num_pages }}">Last</a>
-        {% endif %}
+  {% for post in posts %}
+    <article class="post-card">
+      <img class="article-img" src="{{ post.author.profile.image.url }}" data-fallback-url="{{ profile_image_fallback_url }}" alt="{{ post.author.username }}'s profile picture">
+      <div class="post-card-body">
+        <div class="article-metadata">
+          <a href="{% url 'user-posts' post.author.username %}">{{ post.author }}</a>
+          <span aria-hidden="true">·</span>
+          <time datetime="{{ post.date_posted|date:'c' }}">{{ post.date_posted|date:"M d, Y" }}</time>
+        </div>
+        <h3><a class="article-title" href="{% url 'post-detail' post.id %}">{{ post.title }}</a></h3>
+        <p class="article-content">{{ post.content|truncatewords:45 }}</p>
+        {% include "portfolio/_post_conversation.html" %}
+      </div>
+    </article>
+  {% empty %}
+    <div class="empty-state">
+      <span class="eyebrow">A fresh start</span>
+      <h2>It’s quiet in here. For now.</h2>
+      <p>Be the first to share a story with the community.</p>
+      {% if user.is_authenticated %}
+        <a class="btn btn-primary" href="{% url 'post-create' %}">Write the first post</a>
+      {% else %}
+        <a class="btn btn-primary" href="{% url 'register' %}">Join and post first</a>
+      {% endif %}
+    </div>
+  {% endfor %}
 
-    {% endif %}
+  {% if is_paginated %}
+    <nav class="pagination" aria-label="Post pages">
+      {% if page_obj.has_previous %}
+        <a class="btn btn-outline-info" href="?page={{ page_obj.previous_page_number }}">← Newer</a>
+      {% endif %}
+      <span class="btn btn-info" aria-current="page">{{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span>
+      {% if page_obj.has_next %}
+        <a class="btn btn-outline-info" href="?page={{ page_obj.next_page_number }}">Older →</a>
+      {% endif %}
+    </nav>
+  {% endif %}
 {% endblock content %}

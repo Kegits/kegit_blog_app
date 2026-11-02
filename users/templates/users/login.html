@@ -1,24 +1,22 @@
 {% extends "portfolio/base.html" %}
 {% load crispy_forms_tags %}
 {% block content %}
-    <div class="content-section">
-        <form method="post">
-            {% csrf_token %}
-            <fieldset class="form-group">
-                <legend class="border-bottom mb-4">Log In</legend>
-                {{ form|crispy }}
-            </fieldset>
-            <div class="form-group">
-                <button class="btn btn-outline-info" type="submit">Login</button>
-                <small class="text-muted ml-2">
-                    <a href="{% url 'password_reset' %}">Forgot Password?</a>
-                </small>
-            </div>
-        </form>
-        <div class="border-top pt-3">
-            <small class="text-muted">
-                Need An Account? <a class="ml-2" href="{% url 'register' %}">Sign Up Now</a>
-            </small>
-        </div>
+  <section class="account-card">
+    <div class="form-heading">
+      <span class="eyebrow">Good to have you back</span>
+      <h1>Welcome back.</h1>
+      <p>Sign in to pick up the conversation.</p>
     </div>
+    <form method="post">
+      {% csrf_token %}
+      {{ form|crispy }}
+      <div class="d-flex flex-wrap align-items-center justify-content-between mb-3">
+        <a href="{% url 'password_reset' %}">Forgot password?</a>
+        <button class="btn btn-primary" type="submit">Sign in</button>
+      </div>
+    </form>
+    <div class="border-top pt-3 mt-3">
+      <small class="text-muted">New around here? <a href="{% url 'register' %}">Create an account</a></small>
+    </div>
+  </section>
 {% endblock content %}

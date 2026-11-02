@@ -19,28 +19,25 @@ def upload_default_image():
     """
     print("Uploading default.jpg to Cloudinary...")
 
-    # Check if Cloudinary is configured
-    if not hasattr(settings, 'CLOUDINARY_CLOUD_NAME') or not settings.CLOUDINARY_CLOUD_NAME:
-        print("ERROR: Cloudinary not configured. Set CLOUDINARY_CLOUD_NAME in environment.")
-        return
+    if not settings.CLOUDINARY_CLOUD_NAME:
+        raise RuntimeError("Cloudinary is not configured.")
 
     image_path = os.path.join(settings.MEDIA_ROOT, 'default.jpg')
 
     if not os.path.exists(image_path):
-        print(f"ERROR: default.jpg not found at {image_path}")
-        return
+        raise FileNotFoundError(f"default.jpg not found at {image_path}")
 
     try:
         result = cloudinary.uploader.upload(
             image_path,
-            public_id='profile_pics/default.jpg',
-            folder='profile_pics',
+            public_id='profile_pics/default',
             resource_type='image',
             overwrite=True,
         )
-        print(f"✓ Uploaded default.jpg to Cloudinary: {result.get('public_id')}")
-    except Exception as e:
-        print(f"ERROR uploading default.jpg: {str(e)}")
+    except Exception as exc:
+        raise RuntimeError("Cloudinary upload of the default profile image failed.") from exc
+
+    print(f"Uploaded default.jpg to Cloudinary: {result.get('public_id')}")
 
 if __name__ == '__main__':
     upload_default_image()

@@ -1,0 +1,19 @@
+{% load mentions %}
+{% for comment in comments %}
+  <article class="comment-card preview-comment">
+    <img class="comment-avatar" src="{{ comment.author.profile.image.url }}" data-fallback-url="{{ profile_image_fallback_url }}" alt="">
+    <div class="comment-body">
+      <div class="comment-meta">
+        <a href="{% url 'user-posts' comment.author.username %}">{{ comment.author.username }}</a>
+        <time datetime="{{ comment.created_at|date:'c' }}">{{ comment.created_at|timesince }} ago</time>
+      </div>
+      <p>{{ comment|render_mentions|linebreaksbr }}</p>
+    </div>
+  </article>
+{% empty %}
+  <p class="comments-empty">No comments yet. Be the first to share a thought.</p>
+{% endfor %}
+<a class="conversation-view-all" href="{{ post.get_absolute_url }}#comments-heading">
+  {% if post.comment_count > 3 %}View all {{ post.comment_count }} comments{% else %}Join the conversation{% endif %}
+  <span aria-hidden="true">↗</span>
+</a>

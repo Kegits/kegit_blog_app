@@ -1,16 +1,23 @@
 {% extends "portfolio/base.html" %}
 {% load crispy_forms_tags %}
 {% block content %}
-    <div class="content-section">
-        <form method="post">
-            {% csrf_token %}
-            <fieldset class="form-group">
-                <legend class="border-bottom mb-4">Blog Post</legend>
-                {{ form|crispy }}
-            </fieldset>
-            <div class="form-group">
-                <button class="btn btn-outline-info" type="submit">Post</button>
-            </div>
-        </form>
+  <section class="content-section">
+    <div class="form-heading">
+      <span class="eyebrow">Your voice matters</span>
+      <h1>{% if object %}Edit your story{% else %}Write a story{% endif %}</h1>
+      <p>Share something worth talking about with the community.</p>
     </div>
+    <form method="post">
+      {% csrf_token %}
+      {{ form|crispy }}
+      <div class="form-group mb-0">
+        <button class="btn btn-primary" type="submit">{% if object %}Save changes{% else %}Publish story{% endif %}</button>
+        {% if object %}
+          <a class="btn btn-outline-secondary ml-2" href="{% url 'post-detail' object.id %}">Cancel</a>
+        {% else %}
+          <a class="btn btn-outline-secondary ml-2" href="{% url 'portfolio-home' %}">Cancel</a>
+        {% endif %}
+      </div>
+    </form>
+  </section>
 {% endblock content %}

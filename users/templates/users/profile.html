@@ -1,24 +1,24 @@
 {% extends "portfolio/base.html" %}
 {% load crispy_forms_tags %}
 {% block content %}
-<div class="content-section">
-    <div class="media">
-      <img class="rounded-circle account-img" src="{{ user.profile.image.url }}">
-      <div class="media-body">
-        <h2 class="account-heading">{{ user.username }}</h2>
-        <p class="text-secondary">{{ user.email }}</p>
+<section class="content-section">
+    <div class="account-profile">
+      <img class="account-img" src="{{ user.profile.image.url }}" data-fallback-url="{{ profile_image_fallback_url }}" alt="{{ user.username }}'s profile picture">
+      <div>
+        <span class="eyebrow">Your corner of the community</span>
+        <h1 class="account-heading">{{ user.username }}</h1>
+        <p class="account-email">{{ user.email }}</p>
       </div>
     </div>
     <form method="post" enctype="multipart/form-data">
       {% csrf_token %}
-      <fieldset class="form-group">
-          <legend class="border-bottom mb-4">Profile Info</legend>
-          {{ u_form|crispy }}
-          {{ p_form|crispy }}
-      </fieldset>
-      <div class="form-group">
-          <button class="btn btn-outline-info" type="submit">Update</button>
+      <div class="form-heading">
+        <h2>Profile settings</h2>
+        <p>Update your details or choose a new profile picture. Your current picture appears across your stories.</p>
       </div>
-  </form>
-  </div>
+      {{ u_form|crispy }}
+      {{ p_form|crispy }}
+      <button class="btn btn-primary" type="submit">Save profile</button>
+    </form>
+</section>
 {% endblock content %}

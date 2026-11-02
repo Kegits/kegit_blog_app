@@ -1,0 +1,36 @@
+{% extends "portfolio/base.html" %}
+{% load mentions %}
+{% block content %}
+  <section class="hero-panel inbox-hero">
+    <span class="eyebrow">People are talking to you</span>
+    <h1>Your mentions.</h1>
+    <p>When someone tags you in a public comment, you’ll find it here.</p>
+  </section>
+
+  <section class="social-section">
+    <div class="mention-list">
+      {% for notification in notifications %}
+        <article class="mention-card{% if not notification.read_at %} mention-unread{% endif %}">
+          <img class="comment-avatar" src="{{ notification.comment.author.profile.image.url }}" data-fallback-url="{{ profile_image_fallback_url }}" alt="">
+          <div class="mention-content">
+            <div class="comment-meta">
+              <a href="{% url 'user-posts' notification.comment.author.username %}">{{ notification.comment.author.username }}</a>
+              <span>mentioned you</span>
+              <time datetime="{{ notification.created_at|date:'c' }}">{{ notification.created_at|date:"M d, Y · g:i a" }}</time>
+            </div>
+            <p class="mention-excerpt">{{ notification.comment|render_mentions|linebreaksbr }}</p>
+            <form action="{% url 'notification-open' notification.pk %}" method="post">
+              {% csrf_token %}
+              <button class="btn btn-outline-info btn-sm" type="submit">View story</button>
+            </form>
+          </div>
+        </article>
+      {% empty %}
+        <div class="empty-state">
+          <h2>No mentions yet.</h2>
+          <p>When someone tags you in a comment, you’ll see it here.</p>
+        </div>
+      {% endfor %}
+    </div>
+  </section>
+{% endblock content %}

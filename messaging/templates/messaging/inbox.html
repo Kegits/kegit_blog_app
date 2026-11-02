@@ -1,0 +1,58 @@
+{% extends "portfolio/base.html" %}
+{% block content %}
+  <section class="hero-panel inbox-hero">
+    <span class="eyebrow">A little more personal</span>
+    <h1>Your private conversations.</h1>
+    <p>Messages are visible only to you and the person you’re chatting with.</p>
+  </section>
+
+  <section class="social-section">
+    <div class="section-heading">
+      <div>
+        <span class="eyebrow">Say hello</span>
+        <h2>Start a private chat</h2>
+      </div>
+    </div>
+    <form class="start-chat-form" action="{% url 'messaging:start' %}" method="post">
+      {% csrf_token %}
+      <label class="sr-only" for="{{ start_form.username.id_for_label }}">Username</label>
+      {{ start_form.username }}
+      <button class="btn btn-primary" type="submit">Start chat</button>
+    </form>
+  </section>
+
+  <section class="social-section">
+    <div class="section-heading">
+      <div>
+        <span class="eyebrow">Just between you</span>
+        <h2>Your inbox</h2>
+      </div>
+    </div>
+    <div class="conversation-list">
+      {% for row in conversation_rows %}
+        <a class="conversation-card{% if row.conversation.unread_count %} conversation-unread{% endif %}" href="{% url 'messaging:conversation' row.conversation.pk %}">
+          <img class="conversation-avatar" src="{{ row.other_user.profile.image.url }}" data-fallback-url="{{ profile_image_fallback_url }}" alt="">
+          <span class="conversation-summary">
+            <strong>{{ row.other_user.username }}</strong>
+            <span class="conversation-preview">
+              {% if row.conversation.latest_message_body %}
+                {% if row.conversation.latest_message_sender_id == user.pk %}You: {% endif %}{{ row.conversation.latest_message_body|truncatechars:90 }}
+              {% else %}
+                Start your conversation
+              {% endif %}
+            </span>
+          </span>
+          <span class="conversation-meta">
+            {% if row.conversation.latest_message_sent_at %}<time>{{ row.conversation.latest_message_sent_at|date:"M d" }}</time>{% endif %}
+            {% if row.conversation.unread_count %}<span class="nav-count">{{ row.conversation.unread_count }}</span>{% endif %}
+          </span>
+        </a>
+      {% empty %}
+        <div class="empty-state">
+          <h2>Your inbox is ready.</h2>
+          <p>Enter someone’s username above to start a private conversation.</p>
+        </div>
+      {% endfor %}
+    </div>
+  </section>
+{% endblock content %}

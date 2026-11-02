@@ -1,9 +1,9 @@
 {% extends "portfolio/base.html" %}
 {% block content %}
-<h2>You have been logged out</h2>
-<div class="border-top pt-3">
-    <small class="text-muted">
-        <a href="{% url 'login' %}">Log In Again</a>
-    </small>
-</div>
+<section class="account-card text-center">
+  <span class="eyebrow">Until next time</span>
+  <h1>You’re signed out.</h1>
+  <p class="form-help mb-4">Thanks for being part of the conversation. Come back anytime.</p>
+  <a class="btn btn-primary" href="{% url 'login' %}">Sign in again</a>
+</section>
 {% endblock content %}
