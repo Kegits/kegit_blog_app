@@ -8,6 +8,41 @@ document.addEventListener('error', (event) => {
   image.src = image.dataset.fallbackUrl;
 }, true);
 
+function addPasswordVisibilityToggles() {
+  document.querySelectorAll('input[type="password"]').forEach((input) => {
+    if (input.dataset.visibilityToggleInitialized) {
+      return;
+    }
+
+    input.dataset.visibilityToggleInitialized = 'true';
+    const wrapper = document.createElement('div');
+    wrapper.className = 'password-input-wrapper';
+    input.parentNode.insertBefore(wrapper, input);
+    wrapper.append(input);
+
+    const toggle = document.createElement('button');
+    toggle.className = 'password-visibility-toggle';
+    toggle.type = 'button';
+    toggle.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z"></path><circle cx="12" cy="12" r="3"></circle><path class="password-visibility-slash" d="m4 4 16 16"></path></svg>';
+    toggle.setAttribute('aria-label', 'Show password');
+    toggle.setAttribute('aria-pressed', 'false');
+    toggle.addEventListener('click', () => {
+      const showPassword = input.type === 'password';
+      input.type = showPassword ? 'text' : 'password';
+      toggle.classList.toggle('password-visible', showPassword);
+      toggle.setAttribute('aria-label', `${showPassword ? 'Hide' : 'Show'} password`);
+      toggle.setAttribute('aria-pressed', String(showPassword));
+    });
+    wrapper.append(toggle);
+  });
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', addPasswordVisibilityToggles);
+} else {
+  addPasswordVisibilityToggles();
+}
+
 async function loadConversationPreview(details) {
   const content = details.querySelector('[data-comments-content]');
   if (!content || details.dataset.loaded || details.dataset.loading) {
