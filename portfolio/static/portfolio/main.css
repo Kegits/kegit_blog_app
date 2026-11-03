@@ -790,6 +790,54 @@ h6 {
   box-shadow: 0 0 0 0.2rem rgb(21 115 71 / 12%);
 }
 
+.password-input-wrapper {
+  position: relative;
+}
+
+.password-input-wrapper .form-control {
+  padding-right: 3rem;
+}
+
+.password-visibility-toggle {
+  position: absolute;
+  top: 50%;
+  right: 0.6rem;
+  display: grid;
+  width: 2rem;
+  height: 2rem;
+  padding: 0.35rem;
+  place-items: center;
+  transform: translateY(-50%);
+  border: 0;
+  border-radius: 0.35rem;
+  background: transparent;
+  color: var(--green);
+  cursor: pointer;
+}
+
+.password-visibility-toggle svg {
+  width: 100%;
+  height: 100%;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.8;
+}
+
+.password-visibility-slash {
+  display: none;
+}
+
+.password-visibility-toggle.password-visible .password-visibility-slash {
+  display: block;
+}
+
+.password-visibility-toggle:focus-visible {
+  outline: 2px solid var(--green);
+  outline-offset: 2px;
+}
+
 .account-profile {
   display: flex;
   align-items: center;
